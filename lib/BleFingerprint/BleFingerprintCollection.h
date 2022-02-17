@@ -27,23 +27,23 @@ public:
         _skipDistance = skipDistance;
         _skipMs = skipMs;
         _maxDistance = maxDistance;
-        _include = include;
-        _exclude = exclude;
-        _query = query;
+        _include = std::move(include);
+        _exclude = std::move(exclude);
+        _query = std::move(query);
     }
-    int getSkipMs() { return _skipMs; }
-    float getSkipDistance() { return _skipDistance; }
-    int getRefRssi() { return _refRssi; }
-    float getMaxDistance() { return _maxDistance; }
-    String getInclude() { return _include; }
-    String getExclude() { return _exclude; }
-    String getQuery() { return _query; }
+    int getSkipMs() const { return _skipMs; }
+    float getSkipDistance() const { return _skipDistance; }
+    int getRefRssi() const { return _refRssi; }
+    float getMaxDistance() const { return _maxDistance; }
+    String getInclude() const { return _include; }
+    String getExclude() const { return _exclude; }
+    String getQuery() const { return _query; }
 
 private:
     bool _disable = false;
 
-    float _maxDistance, _skipDistance;
-    int _refRssi, _forgetMs, _skipMs;
+    float _maxDistance{}, _skipDistance{};
+    int _refRssi{}, _forgetMs{}, _skipMs{};
     unsigned long lastCleanup = 0;
     String _include, _exclude, _query;
 
@@ -51,15 +51,15 @@ private:
     std::list<BleFingerprint *> fingerprints;
     BleFingerprint *getFingerprintInternal(BLEAdvertisedDevice *advertisedDevice);
 
-    void onResult(BLEAdvertisedDevice *advertisedDevice)
+    void onResult(BLEAdvertisedDevice *advertisedDevice) override
     {
         if (_disable) return;
 
-        Display.seenStart();
+        GUI::seenStart();
         BleFingerprint *f = getFingerprint(advertisedDevice);
         if (f->seen(advertisedDevice))
-            Display.added(f);
-        Display.seenEnd();
+            GUI::added(f);
+        GUI::seenEnd();
     }
 };
 
